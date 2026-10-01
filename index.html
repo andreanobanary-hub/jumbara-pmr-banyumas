@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generator Soal Jumbara PMR Banyumas</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printArea, #printArea * {
+        visibility: visible;
+      }
+      #printArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 20px;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen">
+
+  <!-- Header Navigasi -->
+  <header class="bg-red-700 text-white shadow-md no-print">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-3">
+      <div class="flex items-center gap-3">
+        <i class="ph-bold ph-first-aid text-3xl text-white"></i>
+        <div>
+          <h1 class="text-xl font-bold tracking-wide">JUMBARA PMR KABUPATEN BANYUMAS</h1>
+          <p class="text-xs text-red-100">Sistem Penyusunan & Bank Soal Evaluasi Kontingen</p>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="window.print()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2 shadow">
+          <i class="ph-bold ph-printer"></i> Cetak Lembar Soal
+        </button>
+        <button onclick="exportJSON()" class="bg-red-800 hover:bg-red-900 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2 shadow">
+          <i class="ph-bold ph-download-simple"></i> Cadangkan Data
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Konten Utama -->
+  <main class="max-w-6xl mx-auto p-4 md:py-6 grid grid-cols-1 md:grid-cols-3 gap-6 no-print">
+    
+    <!-- Formulir Input & Opsi -->
+    <div class="md:col-span-1 space-y-4">
+      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+        <h2 class="font-bold text-lg text-slate-800 mb-3 flex items-center gap-2">
+          <i class="ph-bold ph-plus-circle text-red-600"></i> Tambah Soal
+        </h2>
+        
+        <form id="soalForm" onsubmit="tambahSoal(event)" class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Tingkat PMR</label>
+            <select id="tingkat" class="w-full text-sm border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-red-500 outline-none">
+              <option value="Madya">PMR Madya (SMP/MTs)</option>
+              <option value="Wira">PMR Wira (SMA/SMK/MA)</option>
+              <option value="Mula">PMR Mula (SD/MI)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">7 Materi Pokok PMR</label>
+            <select id="materi" class="w-full text-sm border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-red-500 outline-none">
+              <option value="Gerakan Kepalangmerahan">1. Gerakan Kepalangmerahan</option>
+              <option value="Kepemimpinan">2. Kepemimpinan</option>
+              <option value="Pertolongan Pertama">3. Pertolongan Pertama (PP)</option>
+              <option value="Remaja Sehat Peduli Sesama">4. Remaja Sehat Peduli Sesama (RSPS)</option>
+              <option value="Kesehatan Remaja">5. Kesehatan Remaja (Kesja)</option>
+              <option value="Donor Darah Siswa">6. Donor Darah Siswa (Doras)</option>
+              <option value="Ayo Siaga Bencana">7. Ayo Siaga Bencana (ASB)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Tipe Soal</label>
+            <select id="tipeSoal" onchange="toggleTipeSoal()" class="w-full text-sm border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-red-500 outline-none">
+              <option value="PG">Pilihan Ganda</option>
+              <option value="Uraian">Uraian / Kasus Lapangan</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Pertanyaan / Kasus</label>
+            <textarea id="pertanyaan" rows="3" required placeholder="Tuliskan butir soal atau studi kasus..." class="w-full text-sm border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-red-500 outline-none"></textarea>
+          </div>
+
+          <div id="pgArea" class="space-y-2">
+            <input type="text" id="optA" placeholder="Pilihan A" class="w-full text-xs border border-slate-300 rounded p-1.5 outline-none">
+            <input type="text" id="optB" placeholder="Pilihan B" class="w-full text-xs border border-slate-300 rounded p-1.5 outline-none">
+            <input type="text" id="optC" placeholder="Pilihan C" class="w-full text-xs border border-slate-300 rounded p-1.5 outline-none">
+            <input type="text" id="optD" placeholder="Pilihan D" class="w-full text-xs border border-slate-300 rounded p-1.5 outline-none">
+            <select id="kunciJawaban" class="w-full text-xs border border-slate-300 rounded p-1.5 outline-none font-semibold text-slate-700">
+              <option value="A">Kunci Jawaban: A</option>
+              <option value="B">Kunci Jawaban: B</option>
+              <option value="C">Kunci Jawaban: C</option>
+              <option value="D">Kunci Jawaban: D</option>
+            </select>
+          </div>
+
+          <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 rounded-lg text-sm shadow">
+            Simpan ke Daftar
+          </button>
+        </form>
+
+        <hr class="my-4 border-slate-200">
+
+        <!-- Generator Cepat Contoh Bank Soal Banyumas -->
+        <button onclick="muatContohBanyumas()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-2 rounded-lg text-xs flex items-center justify-center gap-1 shadow">
+          <i class="ph-bold ph-lightning"></i> Muat Template Soal Standar Jumbara
+        </button>
+      </div>
+    </div>
+
+    <!-- Tinjauan Daftar Soal Aktif -->
+    <div class="md:col-span-2">
+      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+            <i class="ph-bold ph-list-numbers text-red-600"></i> Daftar Soal Tersusun (<span id="totalSoal">0</span>)
+          </h2>
+          <button onclick="hapusSemua()" class="text-xs text-red-600 hover:underline">Hapus Semua</button>
+        </div>
+
+        <div id="daftarSoal" class="space-y-3">
+          <!-- Card soal akan dirender di sini -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Area Pratinjau Cetak / Dokumen Resmi -->
+  <div id="printArea" class="bg-white max-w-4xl mx-auto p-8 border border-slate-200 my-8 shadow-sm">
+    <!-- KOP RESMI -->
+    <div class="border-b-4 border-double border-black pb-4 text-center">
+      <h3 class="text-lg font-bold uppercase tracking-wider">PALANG MERAH INDONESIA</h3>
+      <h2 class="text-xl font-extrabold uppercase">PENGURUS KABUPATEN BANYUMAS</h2>
+      <p class="text-xs">Sekretariat: Jl. Adhyaksa No. 34 Purwokerto, Banyumas, Jawa Tengah</p>
+      <h4 class="text-sm font-bold mt-2 uppercase underline">EVALUASI MATERI JUMBARA PMR KABUPATEN BANYUMAS</h4>
+    </div>
+
+    <!-- Info Ujian -->
+    <div class="grid grid-cols-2 text-xs my-4 font-medium border-b border-black pb-2">
+      <div>
+        <p>Mata Uji : 7 Materi Pokok Palang Merah Remaja</p>
+        <p>Sasaran : Kontingen PMR Madya / Wira</p>
+      </div>
+      <div class="text-right">
+        <p>Lokasi : Buper Kendalisada / Wilayah Kab. Banyumas</p>
+        <p>Waktu Pengerjaan : 60 Menit</p>
+      </div>
+    </div>
+
+    <!-- List Soal Siap Cetak -->
+    <ol id="soalCetakList" class="list-decimal pl-5 space-y-4 text-sm leading-relaxed text-black">
+      <!-- Item cetak diinjeksi via JS -->
+    </ol>
+  </div>
+
+  <script>
+    let bankSoal = JSON.parse(localStorage.getItem('jumbara_soal') || '[]');
+
+    function simpanKeStorage() {
+      localStorage.setItem('jumbara_soal', JSON.stringify(bankSoal));
+      renderDaftar();
+    }
+
+    function toggleTipeSoal() {
+      const tipe = document.getElementById('tipeSoal').value;
+      const pgArea = document.getElementById('pgArea');
+      pgArea.style.display = tipe === 'PG' ? 'block' : 'none';
+    }
+
+    function tambahSoal(e) {
+      e.preventDefault();
+      const tipe = document.getElementById('tipeSoal').value;
+      const soalBaru = {
+        id: Date.now(),
+        tingkat: document.getElementById('tingkat').value,
+        materi: document.getElementById('materi').value,
+        tipe: tipe,
+        pertanyaan: document.getElementById('pertanyaan').value,
+        optA: tipe === 'PG' ? document.getElementById('optA').value : '',
+        optB: tipe === 'PG' ? document.getElementById('optB').value : '',
+        optC: tipe === 'PG' ? document.getElementById('optC').value : '',
+        optD: tipe === 'PG' ? document.getElementById('optD').value : '',
+        kunci: tipe === 'PG' ? document.getElementById('kunciJawaban').value : '-'
+      };
+
+      bankSoal.push(soalBaru);
+      simpanKeStorage();
+      document.getElementById('soalForm').reset();
+      toggleTipeSoal();
+    }
+
+    function hapusSoal(id) {
+      bankSoal = bankSoal.filter(s => s.id !== id);
+      simpanKeStorage();
+    }
+
+    function hapusSemua() {
+      if(confirm('Hapus semua draft soal yang telah disusun?')) {
+        bankSoal = [];
+        simpanKeStorage();
+      }
+    }
+
+    function muatContohBanyumas() {
+      const template = [
+        {
+          id: Date.now() + 1,
+          tingkat: 'Madya',
+          materi: 'Gerakan Kepalangmerahan',
+          tipe: 'PG',
+          pertanyaan: 'Siapakah tokoh pendiri Palang Merah Internasional yang menulis buku "A Memory of Solferino"?',
+          optA: 'Henry Dunant',
+          optB: 'Guillaume-Henri Dufour',
+          optC: 'Gustave Moynier',
+          optD: 'Louis Appia',
+          kunci: 'A'
+        },
+        {
+          id: Date.now() + 2,
+          tingkat: 'Madya',
+          materi: 'Pertolongan Pertama',
+          tipe: 'PG',
+          pertanyaan: 'Berapakah rasio kompresi dada dan bantuan napas pada Resusitasi Jantung Paru (RJP) untuk penolong tunggal menurut panduan PMI?',
+          optA: '15 kompresi : 2 napas',
+          optB: '30 kompresi : 2 napas',
+          optC: '30 kompresi : 1 napas',
+          optD: '20 kompresi : 2 napas',
+          kunci: 'B'
+        },
+        {
+          id: Date.now() + 3,
+          tingkat: 'Madya',
+          materi: 'Ayo Siaga Bencana',
+          tipe: 'Uraian',
+          pertanyaan: 'Kabupaten Banyumas memiliki potensi kerawanan bencana hidrometeorologi dan vulkanik (Gunung Slamet). Jelaskan 3 tindakan kesiapsiagaan yang wajib dilakukan oleh tim PMR Madya di sekolah!',
+          optA: '', optB: '', optC: '', optD: '', kunci: '-'
+        }
+      ];
+      bankSoal = [...bankSoal, ...template];
+      simpanKeStorage();
+    }
+
+    function renderDaftar() {
+      const container = document.getElementById('daftarSoal');
+      const containerCetak = document.getElementById('soalCetakList');
+      const total = document.getElementById('totalSoal');
+      
+      total.innerText = bankSoal.length;
+      container.innerHTML = '';
+      containerCetak.innerHTML = '';
+
+      if (bankSoal.length === 0) {
+        container.innerHTML = `<p class="text-sm text-slate-400 italic text-center py-8">Belum ada soal ditambahkan. Gunakan formulir di sebelah kiri atau muat template.</p>`;
+        return;
+      }
+
+      bankSoal.forEach((s, idx) => {
+        // Tampilan UI Aplikasi
+        const el = document.createElement('div');
+        el.className = "p-3 bg-slate-50 border border-slate-200 rounded-lg text-sm relative";
+        el.innerHTML = `
+          <div class="flex justify-between items-start gap-2 mb-1">
+            <span class="inline-block bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded font-medium">
+              ${s.materi} (${s.tingkat})
+            </span>
+            <button onclick="hapusSoal(${s.id})" class="text-slate-400 hover:text-red-600"><i class="ph ph-trash text-base"></i></button>
+          </div>
+          <p class="font-medium text-slate-800">${idx + 1}. ${s.pertanyaan}</p>
+          ${s.tipe === 'PG' ? `
+            <div class="grid grid-cols-2 gap-1 text-xs text-slate-600 mt-2 pl-4">
+              <p>A. ${s.optA}</p>
+              <p>B. ${s.optB}</p>
+              <p>C. ${s.optC}</p>
+              <p>D. ${s.optD}</p>
+            </div>
+            <p class="text-xs font-semibold text-emerald-600 mt-1 pl-4">Kunci: ${s.kunci}</p>
+          ` : ''}
+        `;
+        container.appendChild(el);
+
+        // Tampilan Format Cetak PMI
+        const elCetak = document.createElement('li');
+        elCetak.className = "mb-3";
+        elCetak.innerHTML = `
+          <div>
+            <p class="font-medium inline">${s.pertanyaan}</p>
+            ${s.tipe === 'PG' ? `
+              <div class="grid grid-cols-2 gap-x-6 gap-y-1 mt-1 pl-2 text-xs">
+                <span>A. ${s.optA}</span>
+                <span>B. ${s.optB}</span>
+                <span>C. ${s.optC}</span>
+                <span>D. ${s.optD}</span>
+              </div>
+            ` : '<div class="h-16 border-b border-dashed border-slate-300 mt-2"></div>'}
+          </div>
+        `;
+        containerCetak.appendChild(elCetak);
+      });
+    }
+
+    function exportJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(bankSoal, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `bank_soal_jumbara_banyumas_${Date.now()}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    // Inisialisasi awal
+    toggleTipeSoal();
+    renderDaftar();
+  </script>
+</body>
+</html>
