@@ -3,332 +3,490 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generator Soal JUMBARA PMR Madya</title>
+  <title>Generator & Manajemen Soal Jumbara PMR Banyumas</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <style>
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      line-height: 1.6;
-      color: #222;
-      margin: 0;
-      padding: 20px;
-      background-color: #f0f2f5;
-    }
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      background: #ffffff;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
-    
-    /* Panel Tombol Navigasi / Kontrol */
-    .control-panel {
-      position: sticky;
-      top: 15px;
-      background: #ffffff;
-      padding: 12px 16px;
-      margin-bottom: 25px;
-      border: 1px solid #dcdcdc;
-      border-radius: 8px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      z-index: 1000;
-    }
-    .btn-ctrl {
-      padding: 9px 15px;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-      border-radius: 6px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s ease;
-      color: #fff;
-    }
-    .btn-gen { background: #6a1b9a; }      /* Ungu Generator */
-    .btn-edit { background: #1976d2; }     /* Biru Edit */
-    .btn-edit.active { background: #e65100; }
-    .btn-print { background: #2e7d32; }    /* Hijau Print */
-    .btn-reset { background: #c62828; }    /* Merah Reset */
-    .btn-ctrl:hover { opacity: 0.9; transform: translateY(-1px); }
-
-    /* Gaya Lembar Kerja */
-    .header-box {
-      text-align: center;
-      border-bottom: 3px double #b71c1c;
-      padding-bottom: 12px;
-      margin-bottom: 20px;
-    }
-    .header-box h2 {
-      margin: 0 0 6px 0;
-      color: #b71c1c;
-      font-size: 22px;
-      text-transform: uppercase;
-    }
-    .header-box p {
-      margin: 0;
-      color: #555;
-      font-weight: bold;
-    }
-    h3 {
-      background-color: #fbe9e7;
-      color: #b71c1c;
-      padding: 8px 12px;
-      border-left: 5px solid #b71c1c;
-      margin-top: 25px;
-      font-size: 16px;
-    }
-    ol {
-      padding-left: 20px;
-    }
-    li {
-      margin-bottom: 12px;
-    }
-    .options {
-      margin-top: 5px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4px 15px;
-    }
-
-    /* Mode Edit */
-    .editing-mode {
-      outline: 2px dashed #1976d2;
-      background-color: #fffef2;
-      padding: 12px;
-      border-radius: 6px;
-    }
-
-    /* Pengaturan Cetak / PDF */
     @media print {
-      body {
-        background-color: #fff !important;
-        padding: 0 !important;
+      body * {
+        visibility: hidden !important;
       }
-      .control-panel {
+      #printArea, #printArea * {
+        visibility: visible !important;
+      }
+      #printArea {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 15px !important;
+      }
+      .no-print {
         display: none !important;
       }
-      .container {
-        box-shadow: none !important;
-        padding: 0 !important;
-        max-width: 100% !important;
-      }
       .page-break {
-        page-break-before: always;
+        page-break-after: always;
       }
     }
   </style>
 </head>
-<body>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen">
 
-  <div class="container">
-    <!-- PANEL TOMBOL UTAMA -->
-    <div class="control-panel">
-      <button class="btn-ctrl btn-gen" onclick="generateSoalBaru()">🎲 Generate Soal Acak</button>
-      <button id="btnEdit" class="btn-ctrl btn-edit" onclick="toggleEdit()">✏️ Aktifkan Mode Edit</button>
-      <button class="btn-ctrl btn-print" onclick="window.print()">🖨️ Cetak / Simpan PDF</button>
-      <button class="btn-ctrl btn-reset" onclick="resetContent()">🔄 Reset ke Semula</button>
+  <!-- Header Navigasi -->
+  <header class="bg-red-700 text-white shadow-md no-print sticky top-0 z-20">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-3">
+      <div class="flex items-center gap-3">
+        <i class="ph-bold ph-first-aid text-3xl text-white"></i>
+        <div>
+          <h1 class="text-lg font-bold tracking-wide leading-tight">JUMBARA PMR KABUPATEN BANYUMAS</h1>
+          <p class="text-xs text-red-100">Aplikasi Penyusunan & Bank Soal Evaluasi Kontingen</p>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- Fitur Print -->
+        <button onclick="cetakDokumen(false)" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow transition">
+          <i class="ph-bold ph-printer text-base"></i> Cetak Soal
+        </button>
+        <button onclick="cetakDokumen(true)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow transition">
+          <i class="ph-bold ph-check-square-offset text-base"></i> Cetak + Kunci
+        </button>
+        <button onclick="exportJSON()" class="bg-red-900 hover:bg-black text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow transition">
+          <i class="ph-bold ph-download-simple text-base"></i> Backup
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Konten Utama -->
+  <main class="max-w-6xl mx-auto p-4 md:py-6 grid grid-cols-1 md:grid-cols-12 gap-6 no-print">
+    
+    <!-- Kolom Formulir Input & Edit -->
+    <div class="md:col-span-5 space-y-4">
+      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 sticky top-20">
+        <div class="flex justify-between items-center mb-3">
+          <h2 id="formTitle" class="font-bold text-base text-slate-800 flex items-center gap-2">
+            <i class="ph-bold ph-plus-circle text-red-600"></i> Tambah Soal Baru
+          </h2>
+          <!-- Tombol Reset Form Input -->
+          <button type="button" onclick="resetFormInput()" title="Bersihkan isian formulir" class="text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1">
+            <i class="ph-bold ph-arrow-counter-clockwise"></i> Reset Input
+          </button>
+        </div>
+
+        <form id="soalForm" onsubmit="simpanSoal(event)" class="space-y-3">
+          <input type="hidden" id="editId" value="">
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Tingkat</label>
+              <select id="tingkat" class="w-full text-xs border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-red-500 outline-none">
+                <option value="Madya">PMR Madya (SMP)</option>
+                <option value="Wira">PMR Wira (SMA)</option>
+                <option value="Mula">PMR Mula (SD)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Tipe Soal</label>
+              <select id="tipeSoal" onchange="toggleTipeSoal()" class="w-full text-xs border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-red-500 outline-none">
+                <option value="PG">Pilihan Ganda</option>
+                <option value="Uraian">Uraian / Praktik</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">7 Materi Pokok PMR</label>
+            <select id="materi" class="w-full text-xs border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-red-500 outline-none">
+              <option value="Gerakan Kepalangmerahan">1. Gerakan Kepalangmerahan</option>
+              <option value="Kepemimpinan">2. Kepemimpinan</option>
+              <option value="Pertolongan Pertama">3. Pertolongan Pertama (PP)</option>
+              <option value="Remaja Sehat Peduli Sesama">4. Remaja Sehat Peduli Sesama (RSPS)</option>
+              <option value="Kesehatan Remaja">5. Kesehatan Remaja (Kesja)</option>
+              <option value="Donor Darah Siswa">6. Donor Darah Siswa (Doras)</option>
+              <option value="Ayo Siaga Bencana">7. Ayo Siaga Bencana (ASB)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Butir Pertanyaan / Kasus</label>
+            <textarea id="pertanyaan" rows="3" required placeholder="Tuliskan redaksi soal..." class="w-full text-xs border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-red-500 outline-none"></textarea>
+          </div>
+
+          <!-- Opsi Pilihan Ganda -->
+          <div id="pgArea" class="space-y-2 bg-slate-50 p-3 rounded-lg border border-slate-200">
+            <span class="text-xs font-bold text-slate-600">Pilihan Jawaban (A-D)</span>
+            <input type="text" id="optA" placeholder="Pilihan A" class="w-full text-xs border border-slate-300 rounded p-1.5 outline-none bg-white">
+            <input type="text" id="optB" placeholder="Pilihan B" class="w-full text-xs border border-slate-300 rounded p-1.5 outline-none bg-white">
+            <input type="text" id="optC" placeholder="Pilihan C" class="w-full text-xs border border-slate-300 rounded p-1.5 outline-none bg-white">
+            <input type="text" id="optD" placeholder="Pilihan D" class="w-full text-xs border border-slate-300 rounded p-1.5 outline-none bg-white">
+            <div class="pt-1">
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Kunci Jawaban</label>
+              <select id="kunciJawaban" class="w-full text-xs border border-slate-300 rounded p-1.5 outline-none font-bold text-emerald-700 bg-white">
+                <option value="A">Kunci: A</option>
+                <option value="B">Kunci: B</option>
+                <option value="C">Kunci: C</option>
+                <option value="D">Kunci: D</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Tombol Aksi Submit & Batal Edit -->
+          <div class="flex gap-2">
+            <button type="submit" id="btnSubmit" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg text-xs shadow transition">
+              Simpan Soal
+            </button>
+            <button type="button" id="btnCancelEdit" onclick="batalEdit()" class="hidden bg-slate-300 hover:bg-slate-400 text-slate-700 font-semibold px-4 py-2 rounded-lg text-xs transition">
+              Batal
+            </button>
+          </div>
+        </form>
+
+        <hr class="my-4 border-slate-200">
+
+        <!-- Fitur Bantuan: Load Template & Reset Database -->
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="muatContohBanyumas()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium py-2 px-2 rounded-lg text-[11px] flex items-center justify-center gap-1 shadow">
+            <i class="ph-bold ph-lightning"></i> Template Jumbara
+          </button>
+          <button onclick="resetSemuaSoal()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-medium py-2 px-2 rounded-lg text-[11px] flex items-center justify-center gap-1 transition">
+            <i class="ph-bold ph-trash"></i> Reset Bank Soal
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!-- AREA KONTEN YANG BISA DIEDIT & DICETAK -->
-    <div id="editableArea">
-      <div class="header-box">
-        <h2>BANK SOAL KEPALANGMERAHAN PMR MADYA</h2>
-        <p>Materi: Mengenal Gerakan Palang Merah Internasional & PMI (Persiapan JUMBARA)</p>
+    <!-- Kolom Tinjauan Daftar Soal -->
+    <div class="md:col-span-7">
+      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 min-h-[500px]">
+        <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
+          <div>
+            <h2 class="font-bold text-base text-slate-800 flex items-center gap-2">
+              <i class="ph-bold ph-list-numbers text-red-600"></i> Bank Soal Aktif (<span id="totalSoal">0</span>)
+            </h2>
+            <p class="text-xs text-slate-400">Daftar soal yang akan otomatis masuk ke lembar ujian</p>
+          </div>
+        </div>
+
+        <div id="daftarSoal" class="space-y-3">
+          <!-- Item soal akan di-render di sini -->
+        </div>
       </div>
+    </div>
+  </main>
 
-      <h3>BAGIAN I: PILIHAN GANDA</h3>
-      <ol id="containerPG">
-        <!-- Soal Pilihan Ganda dimuat di sini -->
-      </ol>
+  <!-- Area Dokumen Cetak / Kertas PDF PMI -->
+  <div id="printArea" class="hidden bg-white max-w-4xl mx-auto p-6 text-black">
+    <!-- Kop Resmi PMI Banyumas -->
+    <div class="border-b-4 border-double border-black pb-3 text-center">
+      <h3 class="text-base font-bold uppercase tracking-wider">PALANG MERAH INDONESIA</h3>
+      <h2 class="text-lg font-extrabold uppercase">PENGURUS KABUPATEN BANYUMAS</h2>
+      <p class="text-[11px]">Sekretariat: Jl. Adhyaksa No. 34 Purwokerto 53115, Jawa Tengah</p>
+      <h4 class="text-xs font-bold mt-2 uppercase underline">LEMBAR EVALUASI DAN UJI KECAPAKAN JUMBARA PMR</h4>
+    </div>
 
-      <h3>BAGIAN II: ISIAN SINGKAT</h3>
-      <ol id="containerIsian">
-        <!-- Soal Isian dimuat di sini -->
-      </ol>
-
-      <h3>BAGIAN III: URAIAN / STUDI KASUS</h3>
-      <ol id="containerUraian">
-        <!-- Soal Uraian dimuat di sini -->
-      </ol>
-
-      <div class="page-break"></div>
-      <hr style="margin: 30px 0; border: 1px dashed #b71c1c;">
-
-      <div class="header-box">
-        <h2>KUNCI JAWABAN & PEMBAHASAN</h2>
-        <p>Pegangan Pembina / Fasilitator PMR</p>
+    <!-- Data Peserta / Header Ujian -->
+    <div class="grid grid-cols-2 text-xs my-3 font-medium border-b border-black pb-2 leading-relaxed">
+      <div>
+        <p>Materi : 7 Materi Pokok PMR</p>
+        <p>Sasaran : PMR Mula / Madya / Wira</p>
+        <p>Nomor Reg / Kontingen : ..............................................</p>
       </div>
+      <div class="text-right">
+        <p>Waktu Pengerjaan : 60 Menit</p>
+        <p>Kecamatan / Asal Sekolah : ..............................................</p>
+        <p>Nama Lengkap : ..............................................</p>
+      </div>
+    </div>
 
-      <div id="containerKunci">
-        <!-- Kunci Jawaban otomatis sinkron di sini -->
+    <!-- Daftar Soal Cetak -->
+    <ol id="soalCetakList" class="list-decimal pl-5 space-y-4 text-xs leading-relaxed">
+      <!-- Diinjeksi oleh JS -->
+    </ol>
+
+    <!-- Halaman Kunci Jawaban (Muncul jika dipilih) -->
+    <div id="kunciJawabanCetak" class="hidden mt-8 pt-4 border-t-2 border-dashed border-black">
+      <h5 class="text-xs font-bold uppercase underline mb-2">Lampiran: Kunci Jawaban & Rubrik Penilaian</h5>
+      <div id="kunciList" class="grid grid-cols-5 gap-2 text-xs">
+        <!-- Diinjeksi oleh JS -->
       </div>
     </div>
   </div>
 
   <script>
-    // BANK DATA SOAL TERLENGKAP
-    const bankPG = [
-      {
-        q: "Pertempuran dahsyat yang disaksikan oleh Henry Dunant pada Juni 1859 dan menjadi cikal bakal berdirinya Palang Merah adalah pertempuran di desa...",
-        opts: ["A. Castiglione", "B. Solferino", "C. Jenewa", "D. Heiden"],
-        ans: "B. Solferino"
-      },
-      {
-        q: "Buku terkenal karya Henry Dunant yang diterbitkan pada tahun 1862 berisi pengalaman dan usulan relawan bernama...",
-        opts: ["A. Tutti Fratelli", "B. Inter Arma Caritas", "C. A Memory of Solferino", "D. The Red Cross Story"],
-        ans: "C. A Memory of Solferino"
-      },
-      {
-        q: "Konvensi Jenewa I tahun 1864 berfokus pada perlindungan terhadap...",
-        opts: ["A. Anggota militer yang terluka di darat", "B. Korban kapal karam di laut", "C. Tawanan perang", "D. Masyarakat sipil"],
-        ans: "A. Anggota militer yang terluka di darat"
-      },
-      {
-        q: "Komponen Gerakan yang mengkhususkan diri membantu korban bencana alam serta mengoordinasi perhimpunan nasional adalah...",
-        opts: ["A. ICRC", "B. IFRC (Federasi)", "C. Komite Lima", "D. PBB"],
-        ans: "B. IFRC (Federasi)"
-      },
-      {
-        q: "Lambang Palang Merah di atas dasar putih merupakan bentuk penghormatan dan kebalikan bendera negara...",
-        opts: ["A. Prancis", "B. Italia", "C. Swiss", "D. Jerman"],
-        ans: "C. Swiss"
-      },
-      {
-        q: "Lambang pelindung ketiga yang diadopsi secara resmi pada tahun 2005 adalah...",
-        opts: ["A. Singa Merah", "B. Sabit Ungu", "C. Kristal Merah", "D. Bintang Merah"],
-        ans: "C. Kristal Merah"
-      },
-      {
-        q: "Penggunaan lambang Palang Merah pada kemasan produk farmasi komersial tanpa hak disebut bentuk pelanggaran...",
-        opts: ["A. Peniruan", "B. Penggunaan tidak tepat (Usurpation)", "C. Pelanggaran berat", "D. Pengkhianatan"],
-        ans: "B. Penggunaan tidak tepat (Usurpation)"
-      },
-      {
-        q: "Sebelum merdeka, perhimpunan palang merah bentukan kolonial Belanda di Indonesia bernama...",
-        opts: ["A. NERKAI", "B. PMR", "C. KSR", "D. BKR"],
-        ans: "A. NERKAI"
-      },
-      {
-        q: "Presiden Soekarno memerintahkan pembentukan badan Palang Merah Nasional pada 3 September 1945 kepada Menteri Kesehatan...",
-        opts: ["A. Dr. Bahder Djohan", "B. Dr. R. Mochtar", "C. Dr. Buntaran Martoatmodjo", "D. Drs. Moh. Hatta"],
-        ans: "C. Dr. Buntaran Martoatmodjo"
-      },
-      {
-        q: "Palang Merah Indonesia (PMI) secara resmi dibentuk pada tanggal...",
-        opts: ["A. 17 Agustus 1945", "B. 3 September 1945", "C. 5 September 1945", "D. 17 September 1945"],
-        ans: "D. 17 September 1945"
-      },
-      {
-        q: "Prinsip yang mendahulukan korban luka paling parah tanpa diskriminasi suku, agama, dan ras adalah...",
-        opts: ["A. Kemanusiaan", "B. Kesamaan", "C. Kenetralan", "D. Kemandirian"],
-        ans: "B. Kesamaan"
-      },
-      {
-        q: "Prinsip yang menyatakan bahwa di satu negara hanya boleh ada satu Perhimpunan Nasional Palang Merah adalah...",
-        opts: ["A. Kesatuan", "B. Kesemestaan", "C. Kesukarelaan", "D. Kemanusiaan"],
-        ans: "A. Kesatuan"
+    // Inisialisasi Bank Soal dari LocalStorage
+    let bankSoal = JSON.parse(localStorage.getItem('jumbara_soal_v2') || '[]');
+
+    function simpanKeStorage() {
+      localStorage.setItem('jumbara_soal_v2', JSON.stringify(bankSoal));
+      renderDaftar();
+    }
+
+    function toggleTipeSoal() {
+      const tipe = document.getElementById('tipeSoal').value;
+      const pgArea = document.getElementById('pgArea');
+      pgArea.style.display = tipe === 'PG' ? 'block' : 'none';
+    }
+
+    // Reset Form Input (Pembersihan Form)
+    function resetFormInput() {
+      document.getElementById('soalForm').reset();
+      document.getElementById('editId').value = '';
+      document.getElementById('formTitle').innerHTML = `<i class="ph-bold ph-plus-circle text-red-600"></i> Tambah Soal Baru`;
+      document.getElementById('btnSubmit').innerText = 'Simpan Soal';
+      document.getElementById('btnCancelEdit').classList.add('hidden');
+      toggleTipeSoal();
+    }
+
+    // Reset Seluruh Bank Soal
+    function resetSemuaSoal() {
+      if (confirm('Apakah Anda yakin ingin menghapus SELURUH bank soal yang ada? Data tidak dapat dipulihkan.')) {
+        bankSoal = [];
+        simpanKeStorage();
+        resetFormInput();
       }
-    ];
-
-    const bankIsian = [
-      { q: "Rentang usia untuk anggota Palang Merah Remaja tingkat Madya adalah ................. tahun.", a: "12 – 15 tahun" },
-      { q: "Sebutkan 3 Tri Bakti PMR: (1) .................... (2) .................... (3) ....................", a: "(1) Tingkatkan hidup sehat, (2) Berkarya di masyarakat, (3) Mempererat persahabatan nasional/internasional" },
-      { q: "Dua fungsi utama dari lambang kepalangmerahan adalah tanda .................... dan tanda ....................", a: "Tanda Pengenal dan Tanda Perlindungan" },
-      { q: "Ketua Umum Palang Merah Indonesia yang pertama kali adalah ....................", a: "Drs. Mohammad Hatta" },
-      { q: "Semboyan 'Tutti Fratelli' yang terkenal di medan Solferino memiliki arti ....................", a: "Kita Semua Bersaudara / Mereka Semua Saudaraku" }
-    ];
-
-    const bankUraian = [
-      { q: "Sebutkan 2 (dua) imbauan pokok Henry Dunant dalam buku 'A Memory of Solferino'!", a: "1) Membentuk perhimpunan relawan di setiap negara pada masa damai; 2) Perjanjian internasional untuk melindungi petugas dan sarana medis di medan perang." },
-      { q: "Jelaskan perbedaan fungsi lambang sebagai Tanda Pengenal dan Tanda Perlindungan!", a: "Tanda Pengenal: masa damai, ukuran kecil, tanda kepemilikan/organisasi. Tanda Perlindungan: masa konflik/perang, ukuran besar bersih tanpa tambahan, melindungi relawan & sarana medis dari serangan." },
-      { q: "Seorang anggota PMR enggan mengobati teman yang cidera karena berbeda suku dan agama. Jelaskan pelanggaran prinsip dasar yang terjadi!", a: "Melanggar prinsip Kemanusiaan (tidak meringankan penderitaan) dan Kesamaan (diskriminatif, tidak mendahulukan kondisi yang parah)." }
-    ];
-
-    // Fungsi Pengacak (Fisher-Yates Shuffle)
-    function shuffle(arr) {
-      return [...arr].sort(() => Math.random() - 0.5);
     }
 
-    // FUNGSI UTAMA GENERATE SOAL BARU
-    function generateSoalBaru() {
-      // Ambil 5 PG acak, 3 Isian acak, dan 2 Uraian acak
-      const selectedPG = shuffle(bankPG).slice(0, 5);
-      const selectedIsian = shuffle(bankIsian).slice(0, 3);
-      const selectedUraian = shuffle(bankUraian).slice(0, 2);
+    // Tambah atau Update Soal (Simpan)
+    function simpanSoal(e) {
+      e.preventDefault();
+      const editId = document.getElementById('editId').value;
+      const tipe = document.getElementById('tipeSoal').value;
 
-      // Render Pilihan Ganda
-      const cPG = document.getElementById('containerPG');
-      cPG.innerHTML = selectedPG.map(item => `
-        <li>
-          ${item.q}
-          <div class="options">
-            ${item.opts.map(opt => `<div>${opt}</div>`).join('')}
-          </div>
-        </li>
-      `).join('');
+      const dataSoal = {
+        tingkat: document.getElementById('tingkat').value,
+        materi: document.getElementById('materi').value,
+        tipe: tipe,
+        pertanyaan: document.getElementById('pertanyaan').value,
+        optA: tipe === 'PG' ? document.getElementById('optA').value : '',
+        optB: tipe === 'PG' ? document.getElementById('optB').value : '',
+        optC: tipe === 'PG' ? document.getElementById('optC').value : '',
+        optD: tipe === 'PG' ? document.getElementById('optD').value : '',
+        kunci: tipe === 'PG' ? document.getElementById('kunciJawaban').value : '-'
+      };
 
-      // Render Isian Singkat
-      const cIsian = document.getElementById('containerIsian');
-      cIsian.innerHTML = selectedIsian.map(item => `<li>${item.q}</li>`).join('');
-
-      // Render Uraian
-      const cUraian = document.getElementById('containerUraian');
-      cUraian.innerHTML = selectedUraian.map(item => `<li>${item.q}</li>`).join('');
-
-      // Render Kunci Jawaban
-      const cKunci = document.getElementById('containerKunci');
-      cKunci.innerHTML = `
-        <p><b>Kunci Pilihan Ganda:</b></p>
-        <ol>${selectedPG.map(item => `<li>${item.ans}</li>`).join('')}</ol>
-        <p><b>Kunci Isian Singkat:</b></p>
-        <ol>${selectedIsian.map(item => `<li>${item.a}</li>`).join('')}</ol>
-        <p><b>Kunci Uraian:</b></p>
-        <ol>${selectedUraian.map(item => `<li>${item.a}</li>`).join('')}</ol>
-      `;
-
-      // Simpan status konten ini sebagai baseline reset
-      initialBackup = document.getElementById('editableArea').innerHTML;
-    }
-
-    // Manajemen Fitur Edit & Reset
-    const editableArea = document.getElementById('editableArea');
-    const btnEdit = document.getElementById('btnEdit');
-    let initialBackup = "";
-
-    function toggleEdit() {
-      const isEditing = editableArea.isContentEditable;
-      if (isEditing) {
-        editableArea.contentEditable = "false";
-        editableArea.classList.remove('editing-mode');
-        btnEdit.classList.remove('active');
-        btnEdit.innerHTML = "✏️ Aktifkan Mode Edit";
+      if (editId) {
+        // Mode Update / Edit
+        const index = bankSoal.findIndex(s => s.id == editId);
+        if (index !== -1) {
+          bankSoal[index] = { ...bankSoal[index], ...dataSoal };
+        }
       } else {
-        editableArea.contentEditable = "true";
-        editableArea.classList.add('editing-mode');
-        btnEdit.classList.add('active');
-        btnEdit.innerHTML = "💾 Kunci / Selesai Edit";
+        // Mode Tambah Baru
+        bankSoal.push({
+          id: Date.now(),
+          ...dataSoal
+        });
       }
+
+      simpanKeStorage();
+      resetFormInput();
     }
 
-    function resetContent() {
-      if (confirm("Kembalikan tampilan soal ke awal sebelum diedit?")) {
-        editableArea.innerHTML = initialBackup;
-        if (editableArea.isContentEditable) {
-          toggleEdit();
+    // Masuk Mode Edit
+    function editSoal(id) {
+      const s = bankSoal.find(item => item.id == id);
+      if (!s) return;
+
+      document.getElementById('editId').value = s.id;
+      document.getElementById('tingkat').value = s.tingkat;
+      document.getElementById('materi').value = s.materi;
+      document.getElementById('tipeSoal').value = s.tipe;
+      document.getElementById('pertanyaan').value = s.pertanyaan;
+
+      toggleTipeSoal();
+
+      if (s.tipe === 'PG') {
+        document.getElementById('optA').value = s.optA || '';
+        document.getElementById('optB').value = s.optB || '';
+        document.getElementById('optC').value = s.optC || '';
+        document.getElementById('optD').value = s.optD || '';
+        document.getElementById('kunciJawaban').value = s.kunci || 'A';
+      }
+
+      // Update Tampilan Form
+      document.getElementById('formTitle').innerHTML = `<i class="ph-bold ph-note-pencil text-amber-500"></i> Edit Soal #${s.id.toString().slice(-4)}`;
+      document.getElementById('btnSubmit').innerText = 'Perbarui Soal';
+      document.getElementById('btnCancelEdit').classList.remove('hidden');
+
+      // Scroll halus ke form pada perangkat mobile
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function batalEdit() {
+      resetFormInput();
+    }
+
+    function hapusSoal(id) {
+      if (confirm('Hapus soal ini?')) {
+        bankSoal = bankSoal.filter(s => s.id !== id);
+        simpanKeStorage();
+        if (document.getElementById('editId').value == id) {
+          resetFormInput();
         }
       }
     }
 
-    // Inisialisasi awal saat halaman pertama kali dibuka
-    window.onload = function() {
-      generateSoalBaru();
-    };
+    // Render Data ke Tampilan UI & Cetak
+    function renderDaftar() {
+      const container = document.getElementById('daftarSoal');
+      const containerCetak = document.getElementById('soalCetakList');
+      const containerKunci = document.getElementById('kunciList');
+      const total = document.getElementById('totalSoal');
+      
+      total.innerText = bankSoal.length;
+      container.innerHTML = '';
+      containerCetak.innerHTML = '';
+      containerKunci.innerHTML = '';
+
+      if (bankSoal.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 border-2 border-dashed border-slate-200 rounded-lg">
+            <i class="ph ph-clipboard-text text-3xl text-slate-300"></i>
+            <p class="text-xs text-slate-400 mt-2">Belum ada butir soal. Silakan tambah soal atau muat template.</p>
+          </div>
+        `;
+        return;
+      }
+
+      bankSoal.forEach((s, idx) => {
+        // Tampilan Card di UI
+        const el = document.createElement('div');
+        el.className = "p-3.5 bg-slate-50 border border-slate-200 rounded-lg text-xs relative hover:border-slate-300 transition";
+        el.innerHTML = `
+          <div class="flex justify-between items-start gap-2 mb-2">
+            <span class="inline-block bg-red-100 text-red-700 font-semibold px-2 py-0.5 rounded text-[11px]">
+              ${s.materi} • ${s.tingkat}
+            </span>
+            <div class="flex items-center gap-1">
+              <button onclick="editSoal(${s.id})" title="Edit Soal" class="p-1 hover:bg-white rounded text-slate-600 hover:text-amber-600 transition">
+                <i class="ph-bold ph-pencil-simple text-base"></i>
+              </button>
+              <button onclick="hapusSoal(${s.id})" title="Hapus Soal" class="p-1 hover:bg-white rounded text-slate-600 hover:text-rose-600 transition">
+                <i class="ph-bold ph-trash text-base"></i>
+              </button>
+            </div>
+          </div>
+          <p class="font-medium text-slate-800 text-[13px] leading-relaxed">${idx + 1}. ${s.pertanyaan}</p>
+          ${s.tipe === 'PG' ? `
+            <div class="grid grid-cols-2 gap-1.5 text-slate-600 mt-2 pl-3">
+              <p>A. ${s.optA}</p>
+              <p>B. ${s.optB}</p>
+              <p>C. ${s.optC}</p>
+              <p>D. ${s.optD}</p>
+            </div>
+            <div class="mt-2 pl-3 text-[11px] font-semibold text-emerald-700 flex items-center gap-1">
+              <i class="ph-bold ph-key"></i> Kunci Jawaban: <span class="bg-emerald-100 px-1.5 py-0.5 rounded">${s.kunci}</span>
+            </div>
+          ` : `
+            <p class="text-slate-400 italic mt-1 pl-3 text-[11px]">[Tipe Soal Uraian / Praktik Lapangan]</p>
+          `}
+        `;
+        container.appendChild(el);
+
+        // Tampilan Dokumen Cetak
+        const elCetak = document.createElement('li');
+        elCetak.className = "mb-3 pl-1";
+        elCetak.innerHTML = `
+          <div class="inline">
+            <span class="font-normal">${s.pertanyaan}</span>
+            ${s.tipe === 'PG' ? `
+              <div class="grid grid-cols-2 gap-x-6 gap-y-1 mt-1 pl-3 text-[11px]">
+                <span>A. ${s.optA}</span>
+                <span>B. ${s.optB}</span>
+                <span>C. ${s.optC}</span>
+                <span>D. ${s.optD}</span>
+              </div>
+            ` : '<div class="h-20 border-b border-dashed border-slate-300 mt-2 mb-1"></div>'}
+          </div>
+        `;
+        containerCetak.appendChild(elCetak);
+
+        // Entri Kunci Jawaban Cetak
+        const elKunci = document.createElement('div');
+        elKunci.className = "border border-slate-300 p-1 text-center rounded";
+        elKunci.innerText = `${idx + 1}. ${s.tipe === 'PG' ? s.kunci : 'Rubrik'}`;
+        containerKunci.appendChild(elKunci);
+      });
+    }
+
+    // Cetak Dokumen dengan atau tanpa kunci jawaban
+    function cetakDokumen(sertakanKunci) {
+      if (bankSoal.length === 0) {
+        alert('Bank soal masih kosong. Silakan buat atau muat soal terlebih dahulu!');
+        return;
+      }
+      const printArea = document.getElementById('printArea');
+      const kunciArea = document.getElementById('kunciJawabanCetak');
+      
+      printArea.classList.remove('hidden');
+      kunciArea.style.display = sertakanKunci ? 'block' : 'none';
+
+      window.print();
+
+      // Kembalikan ke state semula setelah print dialog ditutup
+      printArea.classList.add('hidden');
+    }
+
+    // Muat Contoh Template Jumbara Banyumas
+    function muatContohBanyumas() {
+      const template = [
+        {
+          id: Date.now() + 1,
+          tingkat: 'Madya',
+          materi: 'Gerakan Kepalangmerahan',
+          tipe: 'PG',
+          pertanyaan: 'Siapakah pendiri Gerakan Palang Merah Internasional yang menginisiasi lahirnya Konvensi Jenewa?',
+          optA: 'Jean Henry Dunant',
+          optB: 'Guillaume-Henri Dufour',
+          optC: 'Gustave Moynier',
+          optD: 'Louis Appia',
+          kunci: 'A'
+        },
+        {
+          id: Date.now() + 2,
+          tingkat: 'Madya',
+          materi: 'Pertolongan Pertama',
+          tipe: 'PG',
+          pertanyaan: 'Pada penanganan korban henti napas dan henti jantung bagi penolong tunggal, perbandingan kompresi dada dan tiupan napas buatan adalah...',
+          optA: '15 kompresi : 2 tiupan',
+          optB: '30 kompresi : 2 tiupan',
+          optC: '30 kompresi : 1 tiupan',
+          optD: '20 kompresi : 2 tiupan',
+          kunci: 'B'
+        },
+        {
+          id: Date.now() + 3,
+          tingkat: 'Madya',
+          materi: 'Ayo Siaga Bencana',
+          tipe: 'Uraian',
+          pertanyaan: 'Wilayah Kabupaten Banyumas berada di lereng Gunung Slamet dan daerah aliran sungai Serayu. Jelaskan 3 langkah kesiapsiagaan mitigasi bencana banjir/longsor yang dapat digagas oleh PMR Madya di lingkungan sekolah!',
+          optA: '', optB: '', optC: '', optD: '', kunci: '-'
+        }
+      ];
+      bankSoal = [...bankSoal, ...template];
+      simpanKeStorage();
+    }
+
+    function exportJSON() {
+      if (bankSoal.length === 0) {
+        alert('Tidak ada data untuk dibackup.');
+        return;
+      }
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(bankSoal, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `bank_soal_jumbara_banyumas_${Date.now()}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    // Eksekusi Awal
+    toggleTipeSoal();
+    renderDaftar();
   </script>
 </body>
 </html>
