@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bank Soal JUMBARA PMR Madya - Kepalangmerahan</title>
+  <title>Generator Soal JUMBARA PMR Madya</title>
   <style>
     body {
       font-family: Arial, Helvetica, sans-serif;
@@ -11,18 +11,18 @@
       color: #222;
       margin: 0;
       padding: 20px;
-      background-color: #f4f6f9;
+      background-color: #f0f2f5;
     }
     .container {
       max-width: 900px;
       margin: 0 auto;
       background: #ffffff;
-      padding: 35px;
+      padding: 30px;
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
     
-    /* Panel Tombol Aksi */
+    /* Panel Tombol Navigasi / Kontrol */
     .control-panel {
       position: sticky;
       top: 15px;
@@ -33,12 +33,12 @@
       border-radius: 8px;
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 10px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       z-index: 1000;
     }
     .btn-ctrl {
-      padding: 10px 18px;
+      padding: 9px 15px;
       font-size: 14px;
       font-weight: bold;
       cursor: pointer;
@@ -48,19 +48,21 @@
       align-items: center;
       gap: 6px;
       transition: all 0.2s ease;
+      color: #fff;
     }
-    .btn-edit { background: #1976d2; color: #fff; }
-    .btn-edit.active { background: #e65100; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
-    .btn-print { background: #2e7d32; color: #fff; }
-    .btn-reset { background: #c62828; color: #fff; }
+    .btn-gen { background: #6a1b9a; }      /* Ungu Generator */
+    .btn-edit { background: #1976d2; }     /* Biru Edit */
+    .btn-edit.active { background: #e65100; }
+    .btn-print { background: #2e7d32; }    /* Hijau Print */
+    .btn-reset { background: #c62828; }    /* Merah Reset */
     .btn-ctrl:hover { opacity: 0.9; transform: translateY(-1px); }
 
     /* Gaya Lembar Kerja */
     .header-box {
       text-align: center;
       border-bottom: 3px double #b71c1c;
-      padding-bottom: 15px;
-      margin-bottom: 25px;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
     }
     .header-box h2 {
       margin: 0 0 6px 0;
@@ -78,40 +80,31 @@
       color: #b71c1c;
       padding: 8px 12px;
       border-left: 5px solid #b71c1c;
-      margin-top: 28px;
+      margin-top: 25px;
       font-size: 16px;
     }
-    ol, ul {
-      padding-left: 24px;
+    ol {
+      padding-left: 20px;
     }
     li {
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .options {
-      margin-top: 6px;
-      margin-left: 5px;
+      margin-top: 5px;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 4px 15px;
     }
-    .badge {
-      display: inline-block;
-      padding: 2px 8px;
-      background: #eeeeee;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: bold;
-    }
 
-    /* Tampilan saat Mode Edit Menyala */
+    /* Mode Edit */
     .editing-mode {
       outline: 2px dashed #1976d2;
       background-color: #fffef2;
-      padding: 15px;
+      padding: 12px;
       border-radius: 6px;
     }
 
-    /* Pengaturan Cetak / Simpan ke PDF */
+    /* Pengaturan Cetak / PDF */
     @media print {
       body {
         background-color: #fff !important;
@@ -134,274 +127,180 @@
 <body>
 
   <div class="container">
-    <!-- Panel Tombol Kontrol -->
+    <!-- PANEL TOMBOL UTAMA -->
     <div class="control-panel">
+      <button class="btn-ctrl btn-gen" onclick="generateSoalBaru()">🎲 Generate Soal Acak</button>
       <button id="btnEdit" class="btn-ctrl btn-edit" onclick="toggleEdit()">✏️ Aktifkan Mode Edit</button>
       <button class="btn-ctrl btn-print" onclick="window.print()">🖨️ Cetak / Simpan PDF</button>
       <button class="btn-ctrl btn-reset" onclick="resetContent()">🔄 Reset ke Semula</button>
     </div>
 
-    <!-- Seluruh Area Naskah Soal -->
+    <!-- AREA KONTEN YANG BISA DIEDIT & DICETAK -->
     <div id="editableArea">
       <div class="header-box">
         <h2>BANK SOAL KEPALANGMERAHAN PMR MADYA</h2>
-        <p>Materi: Mengenal Gerakan Palang Merah Internasional & Palang Merah Indonesia (PMI)</p>
+        <p>Materi: Mengenal Gerakan Palang Merah Internasional & PMI (Persiapan JUMBARA)</p>
       </div>
 
       <h3>BAGIAN I: PILIHAN GANDA</h3>
-      <ol>
-        <li>
-          Pertempuran dahsyat yang disaksikan oleh Henry Dunant pada bulan Juni 1859 dan menjadi latar belakang lahirnya Gerakan Palang Merah adalah pertempuran di desa...
-          <div class="options">
-            <div>A. Castiglione</div>
-            <div>B. Solferino</div>
-            <div>C. Jenewa</div>
-            <div>D. Heiden</div>
-          </div>
-        </li>
-
-        <li>
-          Setelah menyaksikan penderitaan para korban perang, Henry Dunant menuliskan pengalamannya dalam buku yang berjudul...
-          <div class="options">
-            <div>A. <i>Tutti Fratelli</i></div>
-            <div>B. <i>Inter Arma Caritas</i></div>
-            <div>C. <i>A Memory of Solferino</i></div>
-            <div>D. <i>The Red Cross Idea</i></div>
-          </div>
-        </li>
-
-        <li>
-          Konvensi Jenewa yang pertama kali diadopsi oleh konferensi diplomatik pada tahun 1864 mengatur tentang...
-          <div class="options">
-            <div>A. Perbaikan prajurit terluka dalam perang darat</div>
-            <div>B. Perlindungan korban kapal karam di laut</div>
-            <div>C. Perlakuan terhadap tawanan perang</div>
-            <div>D. Perlindungan orang sipil saat perang</div>
-          </div>
-        </li>
-
-        <li>
-          Komponen Gerakan Palang Merah Internasional yang bertugas memberikan bantuan darurat kemanusiaan kepada korban bencana alam serta mengoordinasikan perhimpunan nasional adalah...
-          <div class="options">
-            <div>A. ICRC (Komite Internasional)</div>
-            <div>B. IFRC (Federasi Internasional)</div>
-            <div>C. Komite Lima</div>
-            <div>D. Majelis Umum PBB</div>
-          </div>
-        </li>
-
-        <li>
-          Lambang Palang Merah di atas dasar putih yang diadopsi pada Konferensi Jenewa tahun 1863 merupakan kebalikan dari bendera nasional...
-          <div class="options">
-            <div>A. Prancis</div>
-            <div>B. Austria</div>
-            <div>C. Swiss</div>
-            <div>D. Jerman</div>
-          </div>
-        </li>
-
-        <li>
-          Lambang pelindung ketiga yang diadopsi pada Protokol Tambahan III tahun 2005 adalah...
-          <div class="options">
-            <div>A. Singa dan Matahari Merah</div>
-            <div>B. Bintang Merah</div>
-            <div>C. Kristal Merah</div>
-            <div>D. Segitiga Merah</div>
-          </div>
-        </li>
-
-        <li>
-          Penggunaan lambang Palang Merah oleh sebuah klinik pengobatan swasta atau kemasan obat untuk tujuan komersial termasuk penyalahgunaan lambang kategori...
-          <div class="options">
-            <div>A. Peniruan (*Imitation*)</div>
-            <div>B. Penggunaan tidak tepat (*Usurpation*)</div>
-            <div>C. Pelanggaran berat (*Perfidy*)</div>
-            <div>D. Pengkhianatan</div>
-          </div>
-        </li>
-
-        <li>
-          Pada masa penjajahan Belanda di Indonesia, organisasi kepalangmerahan yang terbentuk pada 21 Oktober 1873 bernama...
-          <div class="options">
-            <div>A. NERKAI</div>
-            <div>B. PMR Madya</div>
-            <div>C. BKR-Laut</div>
-            <div>D. KSR</div>
-          </div>
-        </li>
-
-        <li>
-          Presiden Soekarno memerintahkan pembentukan Perhimpunan Palang Merah Nasional pada 3 September 1945 kepada Menteri Kesehatan yaitu...
-          <div class="options">
-            <div>A. Drs. Mohammad Hatta</div>
-            <div>B. Dr. R. Mochtar</div>
-            <div>C. Dr. Buntaran Martoatmodjo</div>
-            <div>D. Dr. Bahder Djohan</div>
-          </div>
-        </li>
-
-        <li>
-          Ketua dari Panitia Lima yang bertugas menyusun rencana pembentukan Palang Merah Indonesia (PMI) adalah...
-          <div class="options">
-            <div>A. Dr. RCL Senduk</div>
-            <div>B. Dr. Bahder Johan</div>
-            <div>C. Dr. R. Mochtar</div>
-            <div>D. Dr. Sitanala</div>
-          </div>
-        </li>
-
-        <li>
-          Palang Merah Indonesia secara resmi berdiri pada tanggal...
-          <div class="options">
-            <div>A. 17 Agustus 1945</div>
-            <div>B. 3 September 1945</div>
-            <div>C. 5 September 1945</div>
-            <div>D. 17 September 1945</div>
-          </div>
-        </li>
-
-        <li>
-          Semboyan "<i>Tutti Fratelli</i>" yang diucapkan oleh para relawan perempuan saat menolong korban di Castiglione memiliki arti...
-          <div class="options">
-            <div>A. Korban perang harus selamat</div>
-            <div>B. Mereka semua saudaraku</div>
-            <div>C. Menolong tanpa pamrih</div>
-            <div>D. Hidup perdamaian dunia</div>
-          </div>
-        </li>
-
-        <li>
-          Tujuh Prinsip Dasar Gerakan Palang Merah dan Bulan Sabit Merah Internasional diproklamasikan pada tahun 1965 di kota...
-          <div class="options">
-            <div>A. Jenewa, Swiss</div>
-            <div>B. Wina, Austria</div>
-            <div>C. Solferino, Italia</div>
-            <div>D. Paris, Prancis</div>
-          </div>
-        </li>
-
-        <li>
-          Prinsip yang menekankan pemberian pertolongan tanpa membedakan suku/agama dan mengutamakan korban dengan luka paling parah adalah...
-          <div class="options">
-            <div>A. Kemanusiaan</div>
-            <div>B. Kesamaan</div>
-            <div>C. Kenetralan</div>
-            <div>D. Kemandirian</div>
-          </div>
-        </li>
-
-        <li>
-          Dalam satu negara hanya boleh berdiri satu Perhimpunan Nasional Palang Merah/Bulan Sabit Merah dan tugasnya mencakup seluruh wilayah. Hal ini merupakan isi dari prinsip...
-          <div class="options">
-            <div>A. Kesatuan</div>
-            <div>B. Kesemestaan</div>
-            <div>C. Kesukarelaan</div>
-            <div>D. Kemandirian</div>
-          </div>
-        </li>
+      <ol id="containerPG">
+        <!-- Soal Pilihan Ganda dimuat di sini -->
       </ol>
 
       <h3>BAGIAN II: ISIAN SINGKAT</h3>
-      <ol>
-        <li>Rentang usia bagi anggota Palang Merah Remaja (PMR) tingkat Madya adalah ................. tahun.</li>
-        <li>Sebutkan 3 poin utama dalam <b>Tri Bakti PMR</b>:
-          <ul>
-            <li>a. ............................................................................................................</li>
-            <li>b. ............................................................................................................</li>
-            <li>c. ............................................................................................................</li>
-          </ul>
-        </li>
-        <li>Dua fungsi utama dari lambang kepalangmerahan adalah sebagai tanda .................... dan tanda ....................</li>
-        <li>Ketua Umum Palang Merah Indonesia (PMI) yang pertama kali menjabat adalah ....................</li>
-        <li>Tiga komponen yang membentuk Gerakan Palang Merah dan Bulan Sabit Merah Internasional adalah:
-          <ul>
-            <li>a. ............................................................................................................</li>
-            <li>b. ............................................................................................................</li>
-            <li>c. ............................................................................................................</li>
-          </ul>
-        </li>
+      <ol id="containerIsian">
+        <!-- Soal Isian dimuat di sini -->
       </ol>
 
       <h3>BAGIAN III: URAIAN / STUDI KASUS</h3>
-      <ol>
-        <li>Jelaskan 2 (dua) imbauan / ide pokok yang disampaikan oleh Henry Dunant di dalam buku <i>A Memory of Solferino</i>!</li>
-        <li>Jelaskan perbedaan mendasar fungsi lambang sebagai <b>Tanda Pengenal</b> dan sebagai <b>Tanda Perlindungan</b>!</li>
-        <li>Dalam kegiatan bakti sosial di sekolah, seorang anggota PMR Madya menolak mengobati teman yang jatuh terluka hanya karena berbeda keyakinan/agama. Berdasarkan 7 Prinsip Dasar Gerakan, jelaskan prinsip apa saja yang dilanggar!</li>
+      <ol id="containerUraian">
+        <!-- Soal Uraian dimuat di sini -->
       </ol>
 
-      <!-- Garis pemisah halaman untuk print -->
       <div class="page-break"></div>
-      <hr style="margin: 35px 0; border: 1px dashed #b71c1c;">
+      <hr style="margin: 30px 0; border: 1px dashed #b71c1c;">
 
       <div class="header-box">
         <h2>KUNCI JAWABAN & PEMBAHASAN</h2>
-        <p>Pegangan Fasilitator / Pembina PMR</p>
+        <p>Pegangan Pembina / Fasilitator PMR</p>
       </div>
 
-      <h3>KUNCI PILIHAN GANDA</h3>
-      <p>
-        <b>1. B</b> | <b>2. C</b> | <b>3. A</b> | <b>4. B</b> | <b>5. C</b> | 
-        <b>6. C</b> | <b>7. B</b> | <b>8. A</b> | <b>9. C</b> | <b>10. C</b> | 
-        <b>11. D</b> | <b>12. B</b> | <b>13. B</b> | <b>14. B</b> | <b>15. A</b>
-      </p>
-
-      <h3>KUNCI ISIAN SINGKAT</h3>
-      <ol>
-        <li><b>12 – 15 tahun</b></li>
-        <li>Tri Bakti PMR:
-          <ul>
-            <li>a. <b>Meningkatkan keterampilan hidup sehat</b></li>
-            <li>b. <b>Berkarya dan berbakti di masyarakat</b></li>
-            <li>c. <b>Mempererat persahabatan nasional dan internasional</b></li>
-          </ul>
-        </li>
-        <li><b>Tanda Pengenal</b> dan <b>Tanda Perlindungan</b></li>
-        <li><b>Drs. Mohammad Hatta</b></li>
-        <li>Tiga Komponen Gerakan:
-          <ul>
-            <li>a. <b>ICRC</b> (Komite Internasional Palang Merah)</li>
-            <li>b. <b>IFRC</b> (Federasi Internasional Perhimpunan Palang Merah dan Bulan Sabit Merah)</li>
-            <li>c. <b>Perhimpunan Nasional</b> (contohnya: Palang Merah Indonesia / PMI)</li>
-          </ul>
-        </li>
-      </ol>
-
-      <h3>KUNCI URAIAN / STUDI KASUS</h3>
-      <ol>
-        <li>
-          <b>Dua imbauan Henry Dunant:</b>
-          <ul>
-            <li>Membentuk perhimpunan/kelompok relawan penolong di setiap negara pada masa damai untuk merawat korban pada masa perang.</li>
-            <li>Mengadakan perjanjian internasional antarnegara untuk melindungi para relawan dan petugas medis yang menolong korban luka di medan tempur.</li>
-          </ul>
-        </li>
-        <li>
-          <b>Perbedaan Fungsi Lambang:</b>
-          <ul>
-            <li><b>Tanda Pengenal:</b> Digunakan pada masa damai; ukuran kecil; menunjukkan jati diri bahwa seseorang, kendaraan, atau gedung adalah bagian/milik Gerakan.</li>
-            <li><b>Tanda Perlindungan:</b> Digunakan saat terjadi perang/konflik bersenjata atau bencana besar; ukuran besar dan bersih tanpa imbuhan apapun; berfungsi menjaga keselamatan petugas dan instalasi medis militer agar tidak diserang.</li>
-          </ul>
-        </li>
-        <li>
-          <b>Analisis Pelanggaran Prinsip Gerakan:</b>
-          <ul>
-            <li>Melanggar prinsip <b>Kemanusiaan</b> karena enggan menolong dan mencegah penderitaan sesama.</li>
-            <li>Melanggar prinsip <b>Kesamaan</b> (*Impartiality*) karena membedakan pertolongan berdasarkan agama/suku.</li>
-            <li>Melanggar prinsip <b>Kenetralan</b> karena terpengaruh oleh sekat identitas dan golongan dalam menjalankan tugas.</li>
-          </ul>
-        </li>
-      </ol>
+      <div id="containerKunci">
+        <!-- Kunci Jawaban otomatis sinkron di sini -->
+      </div>
     </div>
   </div>
 
   <script>
+    // BANK DATA SOAL TERLENGKAP
+    const bankPG = [
+      {
+        q: "Pertempuran dahsyat yang disaksikan oleh Henry Dunant pada Juni 1859 dan menjadi cikal bakal berdirinya Palang Merah adalah pertempuran di desa...",
+        opts: ["A. Castiglione", "B. Solferino", "C. Jenewa", "D. Heiden"],
+        ans: "B. Solferino"
+      },
+      {
+        q: "Buku terkenal karya Henry Dunant yang diterbitkan pada tahun 1862 berisi pengalaman dan usulan relawan bernama...",
+        opts: ["A. Tutti Fratelli", "B. Inter Arma Caritas", "C. A Memory of Solferino", "D. The Red Cross Story"],
+        ans: "C. A Memory of Solferino"
+      },
+      {
+        q: "Konvensi Jenewa I tahun 1864 berfokus pada perlindungan terhadap...",
+        opts: ["A. Anggota militer yang terluka di darat", "B. Korban kapal karam di laut", "C. Tawanan perang", "D. Masyarakat sipil"],
+        ans: "A. Anggota militer yang terluka di darat"
+      },
+      {
+        q: "Komponen Gerakan yang mengkhususkan diri membantu korban bencana alam serta mengoordinasi perhimpunan nasional adalah...",
+        opts: ["A. ICRC", "B. IFRC (Federasi)", "C. Komite Lima", "D. PBB"],
+        ans: "B. IFRC (Federasi)"
+      },
+      {
+        q: "Lambang Palang Merah di atas dasar putih merupakan bentuk penghormatan dan kebalikan bendera negara...",
+        opts: ["A. Prancis", "B. Italia", "C. Swiss", "D. Jerman"],
+        ans: "C. Swiss"
+      },
+      {
+        q: "Lambang pelindung ketiga yang diadopsi secara resmi pada tahun 2005 adalah...",
+        opts: ["A. Singa Merah", "B. Sabit Ungu", "C. Kristal Merah", "D. Bintang Merah"],
+        ans: "C. Kristal Merah"
+      },
+      {
+        q: "Penggunaan lambang Palang Merah pada kemasan produk farmasi komersial tanpa hak disebut bentuk pelanggaran...",
+        opts: ["A. Peniruan", "B. Penggunaan tidak tepat (Usurpation)", "C. Pelanggaran berat", "D. Pengkhianatan"],
+        ans: "B. Penggunaan tidak tepat (Usurpation)"
+      },
+      {
+        q: "Sebelum merdeka, perhimpunan palang merah bentukan kolonial Belanda di Indonesia bernama...",
+        opts: ["A. NERKAI", "B. PMR", "C. KSR", "D. BKR"],
+        ans: "A. NERKAI"
+      },
+      {
+        q: "Presiden Soekarno memerintahkan pembentukan badan Palang Merah Nasional pada 3 September 1945 kepada Menteri Kesehatan...",
+        opts: ["A. Dr. Bahder Djohan", "B. Dr. R. Mochtar", "C. Dr. Buntaran Martoatmodjo", "D. Drs. Moh. Hatta"],
+        ans: "C. Dr. Buntaran Martoatmodjo"
+      },
+      {
+        q: "Palang Merah Indonesia (PMI) secara resmi dibentuk pada tanggal...",
+        opts: ["A. 17 Agustus 1945", "B. 3 September 1945", "C. 5 September 1945", "D. 17 September 1945"],
+        ans: "D. 17 September 1945"
+      },
+      {
+        q: "Prinsip yang mendahulukan korban luka paling parah tanpa diskriminasi suku, agama, dan ras adalah...",
+        opts: ["A. Kemanusiaan", "B. Kesamaan", "C. Kenetralan", "D. Kemandirian"],
+        ans: "B. Kesamaan"
+      },
+      {
+        q: "Prinsip yang menyatakan bahwa di satu negara hanya boleh ada satu Perhimpunan Nasional Palang Merah adalah...",
+        opts: ["A. Kesatuan", "B. Kesemestaan", "C. Kesukarelaan", "D. Kemanusiaan"],
+        ans: "A. Kesatuan"
+      }
+    ];
+
+    const bankIsian = [
+      { q: "Rentang usia untuk anggota Palang Merah Remaja tingkat Madya adalah ................. tahun.", a: "12 – 15 tahun" },
+      { q: "Sebutkan 3 Tri Bakti PMR: (1) .................... (2) .................... (3) ....................", a: "(1) Tingkatkan hidup sehat, (2) Berkarya di masyarakat, (3) Mempererat persahabatan nasional/internasional" },
+      { q: "Dua fungsi utama dari lambang kepalangmerahan adalah tanda .................... dan tanda ....................", a: "Tanda Pengenal dan Tanda Perlindungan" },
+      { q: "Ketua Umum Palang Merah Indonesia yang pertama kali adalah ....................", a: "Drs. Mohammad Hatta" },
+      { q: "Semboyan 'Tutti Fratelli' yang terkenal di medan Solferino memiliki arti ....................", a: "Kita Semua Bersaudara / Mereka Semua Saudaraku" }
+    ];
+
+    const bankUraian = [
+      { q: "Sebutkan 2 (dua) imbauan pokok Henry Dunant dalam buku 'A Memory of Solferino'!", a: "1) Membentuk perhimpunan relawan di setiap negara pada masa damai; 2) Perjanjian internasional untuk melindungi petugas dan sarana medis di medan perang." },
+      { q: "Jelaskan perbedaan fungsi lambang sebagai Tanda Pengenal dan Tanda Perlindungan!", a: "Tanda Pengenal: masa damai, ukuran kecil, tanda kepemilikan/organisasi. Tanda Perlindungan: masa konflik/perang, ukuran besar bersih tanpa tambahan, melindungi relawan & sarana medis dari serangan." },
+      { q: "Seorang anggota PMR enggan mengobati teman yang cidera karena berbeda suku dan agama. Jelaskan pelanggaran prinsip dasar yang terjadi!", a: "Melanggar prinsip Kemanusiaan (tidak meringankan penderitaan) dan Kesamaan (diskriminatif, tidak mendahulukan kondisi yang parah)." }
+    ];
+
+    // Fungsi Pengacak (Fisher-Yates Shuffle)
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    // FUNGSI UTAMA GENERATE SOAL BARU
+    function generateSoalBaru() {
+      // Ambil 5 PG acak, 3 Isian acak, dan 2 Uraian acak
+      const selectedPG = shuffle(bankPG).slice(0, 5);
+      const selectedIsian = shuffle(bankIsian).slice(0, 3);
+      const selectedUraian = shuffle(bankUraian).slice(0, 2);
+
+      // Render Pilihan Ganda
+      const cPG = document.getElementById('containerPG');
+      cPG.innerHTML = selectedPG.map(item => `
+        <li>
+          ${item.q}
+          <div class="options">
+            ${item.opts.map(opt => `<div>${opt}</div>`).join('')}
+          </div>
+        </li>
+      `).join('');
+
+      // Render Isian Singkat
+      const cIsian = document.getElementById('containerIsian');
+      cIsian.innerHTML = selectedIsian.map(item => `<li>${item.q}</li>`).join('');
+
+      // Render Uraian
+      const cUraian = document.getElementById('containerUraian');
+      cUraian.innerHTML = selectedUraian.map(item => `<li>${item.q}</li>`).join('');
+
+      // Render Kunci Jawaban
+      const cKunci = document.getElementById('containerKunci');
+      cKunci.innerHTML = `
+        <p><b>Kunci Pilihan Ganda:</b></p>
+        <ol>${selectedPG.map(item => `<li>${item.ans}</li>`).join('')}</ol>
+        <p><b>Kunci Isian Singkat:</b></p>
+        <ol>${selectedIsian.map(item => `<li>${item.a}</li>`).join('')}</ol>
+        <p><b>Kunci Uraian:</b></p>
+        <ol>${selectedUraian.map(item => `<li>${item.a}</li>`).join('')}</ol>
+      `;
+
+      // Simpan status konten ini sebagai baseline reset
+      initialBackup = document.getElementById('editableArea').innerHTML;
+    }
+
+    // Manajemen Fitur Edit & Reset
     const editableArea = document.getElementById('editableArea');
     const btnEdit = document.getElementById('btnEdit');
-    
-    // Menyimpan kondisi naskah awal untuk keperluan Reset
-    const initialBackup = editableArea.innerHTML;
+    let initialBackup = "";
 
-    // Fungsi Toggle Mode Edit
     function toggleEdit() {
       const isEditing = editableArea.isContentEditable;
       if (isEditing) {
@@ -417,16 +316,19 @@
       }
     }
 
-    // Fungsi Reset Konten
     function resetContent() {
-      const konfirmasi = confirm("Apakah Anda yakin ingin mengembalikan seluruh naskah ke isi semula? Perubahan teks yang belum Anda cetak akan hilang.");
-      if (konfirmasi) {
+      if (confirm("Kembalikan tampilan soal ke awal sebelum diedit?")) {
         editableArea.innerHTML = initialBackup;
         if (editableArea.isContentEditable) {
-          toggleEdit(); // Kembalikan ke mode normal
+          toggleEdit();
         }
       }
     }
+
+    // Inisialisasi awal saat halaman pertama kali dibuka
+    window.onload = function() {
+      generateSoalBaru();
+    };
   </script>
 </body>
 </html>
